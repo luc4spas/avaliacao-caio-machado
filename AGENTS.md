@@ -1,0 +1,2 @@
+- Admin access is granted via `public.user_roles` (role `admin`), auto-assigned by a trigger on `auth.users` for allow-listed emails; public signup is disabled. Why: patient data must be readable only by the clinic team.
+- Triagens are inserted directly from the browser under an anon insert-only RLS policy; the admin panel reads/updates via the browser client under admin-only RLS. Why: no server logic needed beyond RLS.
