@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, useRouteContext } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 import { Download, Eye, KanbanSquare, List, Search } from "lucide-react";
 import { useTriagens, useUpdateTriagem } from "@/hooks/use-triagens";
@@ -11,6 +11,7 @@ export const Route = createFileRoute("/admin/crm")({ component: Crm });
 
 const ctl = "h-11 rounded-xl border border-input bg-card px-3 text-sm focus:outline-none focus:ring-2 focus:ring-ring";
 function Crm() {
+  const { role } = useRouteContext({ from: "/admin" });
   const { data = [], isLoading } = useTriagens();
   const upd = useUpdateTriagem();
   const [view, setView] = useState<"list" | "kanban">("list");
@@ -53,7 +54,7 @@ function Crm() {
         <div className="relative flex-1"><Search className="absolute left-3 top-3.5 size-4 text-muted-foreground" /><input aria-label="Buscar" placeholder="Buscar por nome, e-mail ou WhatsApp" value={q} onChange={(e) => setQ(e.target.value)} className={`${ctl} w-full pl-9`} /></div>
         <select aria-label="Nível" value={risk} onChange={(e) => setRisk(e.target.value)} className={ctl}><option value="todos">Todos os níveis</option><option value="alto">Alto</option><option value="moderado">Moderado</option><option value="baixo">Baixo</option></select>
         <select aria-label="Status" value={status} onChange={(e) => setStatus(e.target.value)} className={ctl}><option value="todos">Todos os status</option>{CRM_STATUSES.map((s) => <option key={s.value} value={s.value}>{s.label}</option>)}</select>
-        <button onClick={exportCsv} className="flex h-11 items-center justify-center gap-2 rounded-xl bg-primary px-4 text-sm font-bold text-primary-foreground hover:brightness-110"><Download className="size-4" />Exportar CSV</button>
+        {role === "admin" && <button onClick={exportCsv} className="flex h-11 items-center justify-center gap-2 rounded-xl bg-primary px-4 text-sm font-bold text-primary-foreground hover:brightness-110"><Download className="size-4" />Exportar CSV</button>}
       </div>
 
       {isLoading ? <p className="text-muted-foreground">Carregando…</p> : rows.length === 0 ? <p className="rounded-2xl border border-dashed border-border p-10 text-center text-muted-foreground">Nenhuma triagem encontrada.</p>
@@ -89,7 +90,7 @@ function Crm() {
           })}
         </div>
       )}
-      <PatientSheet t={open} onClose={() => setOpenId(null)} />
+      <PatientSheet t={open} onClose={() => setOpenId(null)} canPrint={role === "admin"} />
     </div>
   );
 }

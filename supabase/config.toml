@@ -1,1 +1,4 @@
-project_id = "cbaxenpbfuahysjtwryv"
+project_id = "avaliacao-caio-machado"
+
+[functions.manage-team-users]
+verify_jwt = true

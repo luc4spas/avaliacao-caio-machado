@@ -6,7 +6,7 @@ import { useUpdateTriagem } from "@/hooks/use-triagens";
 import { RiskBadge, StatusSelect, WhatsIcon } from "./bits";
 import { CONFIG } from "@/config";
 
-export function PatientSheet({ t, onClose }: { t: Triagem | null; onClose: () => void }) {
+export function PatientSheet({ t, onClose, canPrint = true }: { t: Triagem | null; onClose: () => void; canPrint?: boolean }) {
   const upd = useUpdateTriagem();
   const [notes, setNotes] = useState("");
   useEffect(() => setNotes(t?.internal_notes ?? ""), [t?.id]);
@@ -63,7 +63,7 @@ export function PatientSheet({ t, onClose }: { t: Triagem | null; onClose: () =>
             <button onClick={() => upd.mutate({ id: t.id, patch: { internal_notes: notes } })} disabled={upd.isPending}
               className="self-start rounded-full bg-secondary px-5 py-2.5 text-sm font-bold text-secondary-foreground hover:brightness-95">Salvar anotações</button>
           </section>
-          <button onClick={print} className="flex items-center justify-center gap-2 rounded-full border border-border py-3 text-sm font-semibold hover:bg-muted"><Printer className="size-4" />Imprimir / Gerar PDF</button>
+          {canPrint && <button onClick={print} className="flex items-center justify-center gap-2 rounded-full border border-border py-3 text-sm font-semibold hover:bg-muted"><Printer className="size-4" />Imprimir / Gerar PDF</button>}
         </div>
       </SheetContent>
     </Sheet>

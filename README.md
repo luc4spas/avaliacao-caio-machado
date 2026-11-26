@@ -22,14 +22,60 @@ Add these environment variables in the Netlify site settings before deploying:
 - `SUPABASE_PUBLISHABLE_KEY`
 
 Use the Supabase project URL and publishable key for both pairs. The `VITE_`
-variables are included in the browser build; never put a service-role key in a
-`VITE_` variable. The current app uses Supabase RLS with the publishable key.
+variables are included in the browser build. No secret key is required in
+Netlify: privileged team-management operations run in the Supabase Edge
+Function using the managed secret key. Never put a secret key in Netlify or in
+a `VITE_` variable.
 
-After Netlify assigns the site URL, add it to the Supabase Auth site's URL and
-allowed redirect URLs so login and password-reset links return to production.
+## Set up a new Supabase project
 
-This deployment uses the existing Supabase project. Database migrations are
-kept out of this public repository because they contain an administrator email.
+Create a new Supabase project and configure the local and Netlify environment
+variables above with that project's URL and publishable key. The old Drizzle
+migration contains an administrator email and is intentionally excluded; the
+safe initial schema is provided in `supabase/migrations` without personal data.
+
+Install the Supabase CLI, then link the new project and apply the migrations:
+
+```sh
+supabase login
+supabase link --project-ref YOUR_PROJECT_REF
+supabase db push
+supabase functions deploy manage-team-users
+```
+
+The function keeps JWT verification enabled and reads the managed secret key
+from Supabase's Edge Function environment. Do not copy that key to Netlify or
+include it in the browser build.
+
+Before creating the first admin account, add its email to the private
+`admin_email_allowlist` table using the Supabase SQL Editor:
+
+```sql
+insert into public.admin_email_allowlist (email)
+values (lower('admin@example.com'))
+on conflict do nothing;
+```
+
+Then create that user under **Authentication → Users**. The database trigger
+will grant the `admin` role. Public signups should remain disabled. If the Auth
+user already exists, add the allowlist entry and grant the role explicitly
+through `public.user_roles`.
+
+Set the new project's Auth Site URL and allowed redirect URLs to include the
+local development URL and the Netlify site URL, including `/reset-password`.
+This setup starts with an empty database; it does not copy triagens or user
+accounts from Lovable Cloud.
+
+If the initial Auth user already exists before the allowlist entry is added,
+grant the role explicitly in the SQL Editor:
+
+```sql
+insert into public.user_roles (user_id, role)
+select id, 'admin'
+from auth.users
+where lower(email) = lower('admin@example.com')
+on conflict (user_id, role) do nothing;
+```
 
 ## Built with
 
