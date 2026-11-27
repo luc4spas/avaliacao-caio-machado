@@ -14,8 +14,10 @@ import { Route as AdminRouteImport } from './routes/admin'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as AdminIndexRouteImport } from './routes/admin.index'
+import { Route as AdminAssessmentsRouteImport } from './routes/admin.assessments'
 import { Route as AdminCrmRouteImport } from './routes/admin.crm'
 import { Route as AdminUsersRouteImport } from './routes/admin.users'
+import { Route as AvaliacoesSlugRouteImport } from './routes/avaliacoes.$slug'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -42,6 +44,11 @@ const AdminIndexRoute = AdminIndexRouteImport.update({
   path: '/',
   getParentRoute: () => AdminRoute,
 } as any)
+const AdminAssessmentsRoute = AdminAssessmentsRouteImport.update({
+  id: '/assessments',
+  path: '/assessments',
+  getParentRoute: () => AdminRoute,
+} as any)
 const AdminCrmRoute = AdminCrmRouteImport.update({
   id: '/crm',
   path: '/crm',
@@ -52,22 +59,31 @@ const AdminUsersRoute = AdminUsersRouteImport.update({
   path: '/users',
   getParentRoute: () => AdminRoute,
 } as any)
+const AvaliacoesSlugRoute = AvaliacoesSlugRouteImport.update({
+  id: '/avaliacoes/$slug',
+  path: '/avaliacoes/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/admin': typeof AdminRouteWithChildren
   '/login': typeof LoginRoute
   '/reset-password': typeof ResetPasswordRoute
+  '/admin/assessments': typeof AdminAssessmentsRoute
   '/admin/crm': typeof AdminCrmRoute
   '/admin/users': typeof AdminUsersRoute
+  '/avaliacoes/$slug': typeof AvaliacoesSlugRoute
   '/admin/': typeof AdminIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/login': typeof LoginRoute
   '/reset-password': typeof ResetPasswordRoute
+  '/admin/assessments': typeof AdminAssessmentsRoute
   '/admin/crm': typeof AdminCrmRoute
   '/admin/users': typeof AdminUsersRoute
+  '/avaliacoes/$slug': typeof AvaliacoesSlugRoute
   '/admin': typeof AdminIndexRoute
 }
 export interface FileRoutesById {
@@ -76,8 +92,10 @@ export interface FileRoutesById {
   '/admin': typeof AdminRouteWithChildren
   '/login': typeof LoginRoute
   '/reset-password': typeof ResetPasswordRoute
+  '/admin/assessments': typeof AdminAssessmentsRoute
   '/admin/crm': typeof AdminCrmRoute
   '/admin/users': typeof AdminUsersRoute
+  '/avaliacoes/$slug': typeof AvaliacoesSlugRoute
   '/admin/': typeof AdminIndexRoute
 }
 export interface FileRouteTypes {
@@ -87,16 +105,20 @@ export interface FileRouteTypes {
     | '/admin'
     | '/login'
     | '/reset-password'
+    | '/admin/assessments'
     | '/admin/crm'
     | '/admin/users'
+    | '/avaliacoes/$slug'
     | '/admin/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/login'
     | '/reset-password'
+    | '/admin/assessments'
     | '/admin/crm'
     | '/admin/users'
+    | '/avaliacoes/$slug'
     | '/admin'
   id:
     | '__root__'
@@ -104,8 +126,10 @@ export interface FileRouteTypes {
     | '/admin'
     | '/login'
     | '/reset-password'
+    | '/admin/assessments'
     | '/admin/crm'
     | '/admin/users'
+    | '/avaliacoes/$slug'
     | '/admin/'
   fileRoutesById: FileRoutesById
 }
@@ -114,6 +138,7 @@ export interface RootRouteChildren {
   AdminRoute: typeof AdminRouteWithChildren
   LoginRoute: typeof LoginRoute
   ResetPasswordRoute: typeof ResetPasswordRoute
+  AvaliacoesSlugRoute: typeof AvaliacoesSlugRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -153,6 +178,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminIndexRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/assessments': {
+      id: '/admin/assessments'
+      path: '/assessments'
+      fullPath: '/admin/assessments'
+      preLoaderRoute: typeof AdminAssessmentsRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/admin/crm': {
       id: '/admin/crm'
       path: '/crm'
@@ -167,16 +199,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminUsersRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/avaliacoes/$slug': {
+      id: '/avaliacoes/$slug'
+      path: '/avaliacoes/$slug'
+      fullPath: '/avaliacoes/$slug'
+      preLoaderRoute: typeof AvaliacoesSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 interface AdminRouteChildren {
+  AdminAssessmentsRoute: typeof AdminAssessmentsRoute
   AdminCrmRoute: typeof AdminCrmRoute
   AdminUsersRoute: typeof AdminUsersRoute
   AdminIndexRoute: typeof AdminIndexRoute
 }
 
 const AdminRouteChildren: AdminRouteChildren = {
+  AdminAssessmentsRoute: AdminAssessmentsRoute,
   AdminCrmRoute: AdminCrmRoute,
   AdminUsersRoute: AdminUsersRoute,
   AdminIndexRoute: AdminIndexRoute,
@@ -189,6 +230,7 @@ const rootRouteChildren: RootRouteChildren = {
   AdminRoute: AdminRouteWithChildren,
   LoginRoute: LoginRoute,
   ResetPasswordRoute: ResetPasswordRoute,
+  AvaliacoesSlugRoute: AvaliacoesSlugRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

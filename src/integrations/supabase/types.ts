@@ -17,48 +17,132 @@ export type Database = {
       triagens: {
         Row: {
           answers: Json
+          assessment_id: string
+          assessment_snapshot: Json
+          assessment_title: string
+          assessment_version: number
           created_at: string
           crm_status: string
-          hyperactivity_score: number
+          hyperactivity_score: number | null
           id: string
-          inattention_score: number
+          inattention_score: number | null
           internal_notes: string
           lgpd_consent: boolean
           patient_email: string
           patient_name: string
           patient_whatsapp: string
+          participant_data: Json
           risk_level: string
+          result_band: string
+          score_0_100: number
+          score_breakdown: Json
+          score_max: number
+          score_raw: number
           total_score: number
         }
         Insert: {
           answers?: Json
+          assessment_id: string
+          assessment_snapshot?: Json
+          assessment_title?: string
+          assessment_version?: number
           created_at?: string
           crm_status?: string
-          hyperactivity_score: number
+          hyperactivity_score?: number | null
           id?: string
-          inattention_score: number
+          inattention_score?: number | null
           internal_notes?: string
           lgpd_consent?: boolean
           patient_email?: string
           patient_name?: string
           patient_whatsapp?: string
+          participant_data?: Json
           risk_level: string
+          result_band?: string
+          score_0_100?: number
+          score_breakdown?: Json
+          score_max?: number
+          score_raw?: number
           total_score: number
         }
         Update: {
           answers?: Json
+          assessment_id?: string
+          assessment_snapshot?: Json
+          assessment_title?: string
+          assessment_version?: number
           created_at?: string
           crm_status?: string
-          hyperactivity_score?: number
+          hyperactivity_score?: number | null
           id?: string
-          inattention_score?: number
+          inattention_score?: number | null
           internal_notes?: string
           lgpd_consent?: boolean
           patient_email?: string
           patient_name?: string
           patient_whatsapp?: string
+          participant_data?: Json
           risk_level?: string
+          result_band?: string
+          score_0_100?: number
+          score_breakdown?: Json
+          score_max?: number
+          score_raw?: number
           total_score?: number
+        }
+        Relationships: []
+      }
+      assessments: {
+        Row: {
+          created_at: string
+          description: string
+          id: string
+          instructions: string
+          questions: Json
+          participant_fields: Json
+          participant_name_label: string
+          participant_name_required: boolean
+          result_bands: Json
+          scoring: Json
+          slug: string
+          status: "draft" | "published" | "inactive"
+          title: string
+          updated_at: string
+          version: number
+        }
+        Insert: {
+          created_at?: string
+          description?: string
+          id?: string
+          instructions?: string
+          questions?: Json
+          participant_fields?: Json
+          participant_name_label?: string
+          participant_name_required?: boolean
+          result_bands?: Json
+          scoring?: Json
+          slug: string
+          status?: "draft" | "published" | "inactive"
+          title: string
+          updated_at?: string
+          version?: number
+        }
+        Update: {
+          created_at?: string
+          description?: string
+          id?: string
+          instructions?: string
+          questions?: Json
+          participant_fields?: Json
+          participant_name_label?: string
+          participant_name_required?: boolean
+          result_bands?: Json
+          scoring?: Json
+          slug?: string
+          status?: "draft" | "published" | "inactive"
+          title?: string
+          updated_at?: string
+          version?: number
         }
         Relationships: []
       }

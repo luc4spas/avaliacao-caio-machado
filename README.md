@@ -77,6 +77,20 @@ where lower(email) = lower('admin@example.com')
 on conflict (user_id, role) do nothing;
 ```
 
+## Manage assessments
+
+The assessment catalog is available at `/`; published assessments have a
+shareable `/avaliacoes/<slug>` URL. Administrators can create and maintain
+assessments from **Painel → Avaliações**. Each assessment stores its questions,
+answer values, scoring method, result bands, and configurable participant fields.
+Each response stores the submitted participant data with a versioned snapshot.
+Scores are normalized to 0–100; review every instrument's scoring rules and
+interpretation bands with the clinical team before publishing. Use the
+`sem_classificacao` result category when an assessment has no defensible cutoff;
+apply `20261127133000_neutral_assessment_category.sql` before accepting responses
+with that category. Assessments configured for two-decimal scores also require
+`20261127134500_decimal_assessment_scores.sql` before accepting responses.
+
 ## Built with
 
 - TanStack Start

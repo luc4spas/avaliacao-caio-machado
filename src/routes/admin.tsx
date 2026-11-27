@@ -1,7 +1,7 @@
 import { createFileRoute, Link, Outlet, redirect, useNavigate } from "@tanstack/react-router";
 import { useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
-import { LayoutDashboard, LogOut, Menu, ShieldCheck, Users, X } from "lucide-react";
+import { ClipboardList, LayoutDashboard, LogOut, Menu, ShieldCheck, Users, X } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { CONFIG } from "@/config";
 
@@ -58,6 +58,7 @@ function AdminLayout() {
       <div className="mb-6 rounded-2xl bg-brand-navy px-3 py-2"><img src={CONFIG.logoUrl} alt={CONFIG.clinicName} className="h-10 w-auto" /></div>
       <Link to="/admin" activeOptions={{ exact: true }} activeProps={active} className={link} onClick={() => setOpen(false)}><LayoutDashboard className="size-4" />Dashboard</Link>
       <Link to="/admin/crm" activeProps={active} className={link} onClick={() => setOpen(false)}><Users className="size-4" />CRM de Pacientes</Link>
+      {role === "admin" && <Link to="/admin/assessments" activeProps={active} className={link} onClick={() => setOpen(false)}><ClipboardList className="size-4" />Avaliações</Link>}
       {role === "admin" && <Link to="/admin/users" activeProps={active} className={link} onClick={() => setOpen(false)}><ShieldCheck className="size-4" />Usuários da equipe</Link>}
       <div className="mt-auto border-t border-border pt-4">
         <p className="mb-2 truncate px-3 text-xs text-muted-foreground">{user.email}</p>

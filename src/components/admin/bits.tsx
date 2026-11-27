@@ -1,13 +1,24 @@
 import { CRM_STATUSES, RISK_LABEL, type Risk } from "@/lib/quiz";
+import { formatAssessmentScore } from "@/lib/assessments";
 
 const riskCls: Record<Risk, string> = {
   baixo: "bg-risk-low text-risk-low-foreground",
   moderado: "bg-risk-mod text-risk-mod-foreground",
   alto: "bg-risk-high text-risk-high-foreground",
+  sem_classificacao: "bg-muted text-muted-foreground",
 };
 export function RiskBadge({ risk, score }: { risk: string; score?: number }) {
-  const r = (risk as Risk) in riskCls ? (risk as Risk) : "baixo";
-  return <span className={`inline-flex shrink-0 items-center rounded-full px-2.5 py-1 text-xs font-semibold ${riskCls[r]}`}>{RISK_LABEL[r]}{score !== undefined && ` • ${score}/40`}</span>;
+  const isKnownRisk = Object.prototype.hasOwnProperty.call(riskCls, risk);
+  const riskClass = isKnownRisk ? riskCls[risk as Risk] : "bg-muted text-muted-foreground";
+  const riskLabel = isKnownRisk ? RISK_LABEL[risk as Risk] : `Categoria desconhecida: ${risk}`;
+  return (
+    <span
+      className={`inline-flex shrink-0 items-center rounded-full px-2.5 py-1 text-xs font-semibold ${riskClass}`}
+    >
+      {riskLabel}
+      {score !== undefined && ` • ${formatAssessmentScore(score)}/100`}
+    </span>
+  );
 }
 export function StatusSelect({ value, onChange, id }: { value: string; onChange: (v: string) => void; id?: string }) {
   return (

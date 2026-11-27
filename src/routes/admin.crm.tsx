@@ -12,7 +12,7 @@ export const Route = createFileRoute("/admin/crm")({ component: Crm });
 const ctl = "h-11 rounded-xl border border-input bg-card px-3 text-sm focus:outline-none focus:ring-2 focus:ring-ring";
 function Crm() {
   const { role } = useRouteContext({ from: "/admin" });
-  const { data = [], isLoading } = useTriagens();
+  const { data = [], isLoading, error } = useTriagens();
   const upd = useUpdateTriagem();
   const [view, setView] = useState<"list" | "kanban">("list");
   const [q, setQ] = useState(""); const [risk, setRisk] = useState("todos"); const [status, setStatus] = useState("todos");
@@ -52,22 +52,34 @@ function Crm() {
       </div>
       <div className="flex flex-col gap-3 md:flex-row">
         <div className="relative flex-1"><Search className="absolute left-3 top-3.5 size-4 text-muted-foreground" /><input aria-label="Buscar" placeholder="Buscar por nome, e-mail ou WhatsApp" value={q} onChange={(e) => setQ(e.target.value)} className={`${ctl} w-full pl-9`} /></div>
-        <select aria-label="Nível" value={risk} onChange={(e) => setRisk(e.target.value)} className={ctl}><option value="todos">Todos os níveis</option><option value="alto">Alto</option><option value="moderado">Moderado</option><option value="baixo">Baixo</option></select>
+        <select
+          aria-label="Nível"
+          value={risk}
+          onChange={(e) => setRisk(e.target.value)}
+          className={ctl}
+        >
+          <option value="todos">Todos os níveis</option>
+          <option value="alto">Alto</option>
+          <option value="moderado">Moderado</option>
+          <option value="baixo">Baixo</option>
+          <option value="sem_classificacao">Sem classificação automática</option>
+        </select>
         <select aria-label="Status" value={status} onChange={(e) => setStatus(e.target.value)} className={ctl}><option value="todos">Todos os status</option>{CRM_STATUSES.map((s) => <option key={s.value} value={s.value}>{s.label}</option>)}</select>
         {role === "admin" && <button onClick={exportCsv} className="flex h-11 items-center justify-center gap-2 rounded-xl bg-primary px-4 text-sm font-bold text-primary-foreground hover:brightness-110"><Download className="size-4" />Exportar CSV</button>}
       </div>
 
-      {isLoading ? <p className="text-muted-foreground">Carregando…</p> : rows.length === 0 ? <p className="rounded-2xl border border-dashed border-border p-10 text-center text-muted-foreground">Nenhuma triagem encontrada.</p>
+      {error ? <p role="alert" className="rounded-2xl border border-destructive/30 bg-destructive/10 p-4 text-center text-sm text-destructive">Não foi possível carregar as avaliações: {error instanceof Error ? error.message : "erro inesperado"}.</p>
+      : isLoading ? <p className="text-muted-foreground">Carregando…</p> : rows.length === 0 ? <p className="rounded-2xl border border-dashed border-border p-10 text-center text-muted-foreground">Nenhuma avaliação encontrada.</p>
       : view === "list" ? (
         <div className="overflow-hidden rounded-2xl border border-border bg-card shadow-soft">
           {rows.map((t) => (
             <div key={t.id} className="flex flex-col gap-3 border-b border-border p-4 last:border-0 md:flex-row md:items-center">
               <button onClick={() => setOpenId(t.id)} className="min-w-0 flex-1 text-left">
                 <p className="truncate font-semibold">{t.patient_name || "Sem nome"}</p>
-                <p className="text-xs text-muted-foreground">{fmtDate(t.created_at)}</p>
+                <p className="truncate text-xs text-muted-foreground">{t.assessment_title} · {fmtDate(t.created_at)}</p>
               </button>
               <div className="flex flex-wrap items-center gap-2">
-                <RiskBadge risk={t.risk_level} score={t.total_score} />
+                <RiskBadge risk={t.risk_level} score={t.score_0_100} />
                 <StatusSelect value={t.crm_status} onChange={(v) => setSt(t, v)} />
                 <Actions t={t} />
               </div>
@@ -82,8 +94,8 @@ function Crm() {
                 <p className="flex justify-between px-1 text-sm font-bold">{c.label}<span className="text-muted-foreground">{col.length}</span></p>
                 {col.map((t) => (
                   <div key={t.id} className="flex flex-col gap-2 rounded-xl border border-border bg-card p-3 shadow-soft">
-                    <button onClick={() => setOpenId(t.id)} className="text-left"><p className="truncate font-semibold">{t.patient_name || "Sem nome"}</p><p className="text-xs text-muted-foreground">{fmtDate(t.created_at)}</p></button>
-                    <RiskBadge risk={t.risk_level} score={t.total_score} />
+                    <button onClick={() => setOpenId(t.id)} className="text-left"><p className="truncate font-semibold">{t.patient_name || "Sem nome"}</p><p className="text-xs text-muted-foreground">{t.assessment_title} · {fmtDate(t.created_at)}</p></button>
+                    <RiskBadge risk={t.risk_level} score={t.score_0_100} />
                     <div className="flex items-center justify-between gap-2"><StatusSelect value={t.crm_status} onChange={(v) => setSt(t, v)} /><Actions t={t} /></div>
                   </div>))}
               </div>);

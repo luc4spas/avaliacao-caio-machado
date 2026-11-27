@@ -23,8 +23,13 @@ export function getResult(score: number) {
 
 export const INATTENTION_IDX = [0, 1, 2, 3, 6, 7];
 export const HYPER_IDX = [4, 5, 8, 9];
-export type Risk = "baixo" | "moderado" | "alto";
-export const RISK_LABEL: Record<Risk, string> = { baixo: "Baixo", moderado: "Moderado", alto: "Alto" };
+export type Risk = "baixo" | "moderado" | "alto" | "sem_classificacao";
+export const RISK_LABEL: Record<Risk, string> = {
+  baixo: "Baixo",
+  moderado: "Moderado",
+  alto: "Alto",
+  sem_classificacao: "Sem classificação automática",
+};
 
 export function riskOf(score: number): Risk {
   return score <= 14 ? "baixo" : score <= 26 ? "moderado" : "alto";
